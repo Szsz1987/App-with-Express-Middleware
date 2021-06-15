@@ -1,40 +1,41 @@
 const express = require('express');
 const path = require('path');
-const app = express();
+const hbs = require('express-handlebars');
 
-app.use((req,res,next) => {
-  res.showView = (name) => {
-    res.sendFile(path.join(__dirname, `/views/${name}`));
-  };
-  next();
-});
+const app = express();
+app.engine('hbs', hbs());
+app.set('view engine', 'hbs');
 
 app.use(express.static(path.join(__dirname, '/public')));
 
-app.use('/user/panel', (req,res) => {
-  res.showView('login.html');
-});
-
-app.use('/user/settings', (req,res) => {
-  res.showView('login.html');
-});
-
 app.get('/', (req, res) => {
-  res.showView('home.html');
+  res.render('index', { layout: false });
 });
 
-app.get('/home', (req, res) => {
-  res.showView('home.html');
+app.get('/hello/:name', (req, res) => {
+  res.render('hello', { layout: false, name: req.params.name });
 });
 
-app.get('/about', (req,res) => {
-  res.showView('about.html');
+app.get('/about', (req, res) => {
+  res.render('about', { layout: false });
 });
 
-app.use((req,res) => {
-  res.showView('404.html');
+app.get('/contact', (req, res) => {
+  res.render('contact', { layout: false });
 });
 
-app.listen(3000, () => {
-  console.log(path.join(__dirname, 'Server is running on port: 3000'));
+app.get('/info', (req, res) => {
+  res.render('info', { layout: false });
+});
+
+app.get('/history', (req, res) => {
+  res.render('history', { layout: false });
+});
+
+app.use((req, res) => {
+  res.status(404).send('404 not found...');
+})
+
+app.listen(8000, () => {
+  console.log('Server is running on port: 8000');
 });
